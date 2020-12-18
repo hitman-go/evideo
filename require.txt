@@ -2,3 +2,5 @@ tensorflow
 mtcnn
 tqdm
 opencv-python
+pydub
+moviepy
