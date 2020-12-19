@@ -2,8 +2,8 @@ import cv2
 from cv2 import CAP_PROP_FRAME_COUNT
 from tqdm import tqdm
 import os
-import moviepy.editor as mp
-
+import ffmpeg
+import shutil
 
 class Video:
     def __init__(self, input_video, output_video=None):
@@ -30,17 +30,27 @@ class Video:
         self.cap.release()
         cv2.destroyAllWindows()
 
-    def get_mp3(self, audio_name):
-        clip_input = mp.VideoFileClip(self.input_video).subclip()
-        clip_input.audio.write_audiofile(audio_name)
+    def get_mp3(self, audio_name, input_video=None):
+        if input_video != None:
+            
+        stream = ffmpeg.input(self.input_video)
+        stream = ffmpeg.output(stream, audio_name).global_args('-loglevel', 'error')
+        ffmpeg.run(stream)
 
-    def set_mp3(self, audio_name):
-        if os.path.exists(self.output_video):
-            clip_output = mp.VideoFileClip(self.output_video).subclip()
-            clip_output.write_videofile(self.output_video, audio=audio_name)
-        else:
-            raise Exception("NOT FOUND OUTPUTFILE, cannot set mp3")
-
+    def set_mp3(self, audio_name, video_name):
+        audio_stream = ffmpeg.input(audio_name)
+        video_stream = ffmpeg.input(video_name)
+        tmp_video = "tmp"+video_name
+        stream = ffmpeg.output(video_stream, audio_stream, tmp_video)
+        ffmpeg.run(stream)
+        #shutil.copyfile(tmp_video, video_nam)
+        #os.remove(tmp_video)
+        #if os.path.exists(self.output_video):
+        #clip_output = mp.VideoFileClip(self.output_video).subclip()
+        #clip_output.write_videofile(self.output_video, audio=audio_name)
+        #else:
+        #    raise Exception("CANNOT SET MP3 to MP4, NOT FOUND VIDEO FILE!")
+        
     def mosaic(self, img, alpha=0.1):
         w = img.shape[1]
         h = img.shape[0]
@@ -62,5 +72,7 @@ class Video:
         """
         Cut out the video by specifying the start and end seconds.
         """
-        video = mp.VideoFileClip(self.input_video).subclip(start, end)
-        video.write_videofile(self.output_video,fps=self.fps)
+        stream = ffmpeg.input(self.input_video, ss=start, to=end)
+        stream = ffmpeg.output(stream, self.output_video).global_args('-loglevel', 'error')
+        ffmpeg.run(stream)
+        #stream = ffmpeg.crop(self.ffmpeg_stream, upper_left_x, upper_left_y, width, height)
