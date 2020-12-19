@@ -6,13 +6,11 @@ mp3_file = "sample.mp3"
 output_video = "amp_sample.mp4"
 video_ = Video("sample.mp4", output_video=output_video)
 #video_ = Video("sample.mp4")
-#video_.clip(0, 15)
+video_.clip(0, 15)
 video_.get_mp3(mp3_file)
 audio_ = Audio(mp3_file)
 audio_.amplify()
 video_.set_mp3(mp3_file, output_video)
-
-
 
 
 #video_ = Video("amp_sample.mp4")

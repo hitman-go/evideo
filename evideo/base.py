@@ -4,6 +4,8 @@ from tqdm import tqdm
 import os
 import ffmpeg
 import shutil
+from pydub import AudioSegment
+
 
 class Video:
     def __init__(self, input_video, output_video=None):
@@ -31,13 +33,26 @@ class Video:
         cv2.destroyAllWindows()
 
     def get_mp3(self, audio_name, input_video=None):
-        if input_video != None:
-            
-        stream = ffmpeg.input(self.input_video)
+        if input_video == None:
+            input_video = self.input_video
+        stream = ffmpeg.input(input_video)
         stream = ffmpeg.output(stream, audio_name).global_args('-loglevel', 'error')
         ffmpeg.run(stream)
 
     def set_mp3(self, audio_name, video_name):
+
+        # compare audio and video duration time
+        sound = AudioSegment.from_file(audio_name, "mp3")
+        sound_seconds = sound.duration_seconds
+
+        cap = cv2.VideoCapture(video_name)
+        frame_number = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
+        video_seconds = int(frame_number / fps)
+        print("sound_seconds:",sound_seconds)
+        print("video_seconds:",video_seconds)
+        
+        
         audio_stream = ffmpeg.input(audio_name)
         video_stream = ffmpeg.input(video_name)
         tmp_video = "tmp"+video_name
