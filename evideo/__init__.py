@@ -26,16 +26,17 @@ import os
 import shutil
 
 
-def amplify_sound(input_video, output_video, set_video_flag=True):
-    if set_video_flag:
-        if os.path.exists(output_video):
-            os.remove(output_video)
-        shutil.copy2(input_video, output_video)
-    mp3_file = os.path.splitext(os.path.basename(input_video))[0] + ".mp3"
-    # get mp3 from mp4
-    video_ = Video(input_video)
-    video_.get_mp3(mp3_file, input_video)
-
+def amplify_sound(input_file, output_video, set_video_flag=True):
+    ext_ = os.path.splitext(os.path.basename(input_file))[1]
+    if ext_ == ".mp4":
+        if set_video_flag:
+            if os.path.exists(output_video):
+                os.remove(output_video)
+            shutil.copy2(input_file, output_video)
+        mp3_file = os.path.splitext(os.path.basename(input_file))[0] + ".mp3"
+        # get mp3 from mp4
+        video_ = Video(input_file)
+        video_.get_mp3(mp3_file, input_file)
     # amplify mp3 file
     audio_ = Audio(mp3_file)
     audio_.amplify()
