@@ -33,38 +33,31 @@ class Video:
         cv2.destroyAllWindows()
 
     def get_mp3(self, audio_name, input_video=None):
+        """get mp3 from mp4"""
         if input_video == None:
             input_video = self.input_video
         stream = ffmpeg.input(input_video)
         stream = ffmpeg.output(stream, audio_name).global_args('-loglevel', 'error')
-        ffmpeg.run(stream)
+        ffmpeg.run(stream, overwrite_output=True)
 
     def set_mp3(self, audio_name, video_name):
-
+        """set mp3 to mp4"""
         # compare audio and video duration time
         sound = AudioSegment.from_file(audio_name, "mp3")
-        sound_seconds = sound.duration_seconds
-
+        sound_seconds = int(sound.duration_seconds)
         cap = cv2.VideoCapture(video_name)
         frame_number = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         fps = int(cap.get(cv2.CAP_PROP_FPS))
         video_seconds = int(frame_number / fps)
-        print("sound_seconds:",sound_seconds)
-        print("video_seconds:",video_seconds)
-        
+        assert sound_seconds == video_seconds, f"MIAMATCH TIME,SOUND:{sound_seconds} VIDEO:{video_seconds}"
         
         audio_stream = ffmpeg.input(audio_name)
         video_stream = ffmpeg.input(video_name)
         tmp_video = "tmp"+video_name
-        stream = ffmpeg.output(video_stream, audio_stream, tmp_video)
-        ffmpeg.run(stream)
-        #shutil.copyfile(tmp_video, video_nam)
-        #os.remove(tmp_video)
-        #if os.path.exists(self.output_video):
-        #clip_output = mp.VideoFileClip(self.output_video).subclip()
-        #clip_output.write_videofile(self.output_video, audio=audio_name)
-        #else:
-        #    raise Exception("CANNOT SET MP3 to MP4, NOT FOUND VIDEO FILE!")
+        ffmpeg.concat(video_stream, audio_stream, v=1, a=1).output(tmp_video).global_args('-loglevel', 'error').run(overwrite_output=True)
+        os.remove(video_name)
+        shutil.copy2(tmp_video, video_name)
+        os.remove(tmp_video)
         
     def mosaic(self, img, alpha=0.1):
         w = img.shape[1]
@@ -89,5 +82,5 @@ class Video:
         """
         stream = ffmpeg.input(self.input_video, ss=start, to=end)
         stream = ffmpeg.output(stream, self.output_video).global_args('-loglevel', 'error')
-        ffmpeg.run(stream)
+        ffmpeg.run(stream, overwrite_output=True)
         #stream = ffmpeg.crop(self.ffmpeg_stream, upper_left_x, upper_left_y, width, height)
