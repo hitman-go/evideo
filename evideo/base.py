@@ -96,4 +96,3 @@ class Video:
             stream, self.output_video).global_args(
             '-loglevel', 'error')
         ffmpeg.run(stream, overwrite_output=True)
-        #stream = ffmpeg.crop(self.ffmpeg_stream, upper_left_x, upper_left_y, width, height)
