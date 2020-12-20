@@ -3,4 +3,3 @@ mtcnn
 tqdm
 opencv-python
 pydub
-moviepy

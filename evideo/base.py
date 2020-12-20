@@ -34,10 +34,14 @@ class Video:
 
     def get_mp3(self, audio_name, input_video=None):
         """get mp3 from mp4"""
-        if input_video == None:
+        if input_video is None:
             input_video = self.input_video
         stream = ffmpeg.input(input_video)
-        stream = ffmpeg.output(stream, audio_name).global_args('-loglevel', 'error')
+        stream = ffmpeg.output(
+            stream,
+            audio_name).global_args(
+            '-loglevel',
+            'error')
         ffmpeg.run(stream, overwrite_output=True)
 
     def set_mp3(self, audio_name, video_name):
@@ -50,15 +54,22 @@ class Video:
         fps = int(cap.get(cv2.CAP_PROP_FPS))
         video_seconds = int(frame_number / fps)
         assert sound_seconds == video_seconds, f"MIAMATCH TIME,SOUND:{sound_seconds} VIDEO:{video_seconds}"
-        
+
         audio_stream = ffmpeg.input(audio_name)
         video_stream = ffmpeg.input(video_name)
-        tmp_video = "tmp"+video_name
-        ffmpeg.concat(video_stream, audio_stream, v=1, a=1).output(tmp_video).global_args('-loglevel', 'error').run(overwrite_output=True)
+        tmp_video = "tmp" + video_name
+        ffmpeg.concat(
+            video_stream,
+            audio_stream,
+            v=1,
+            a=1).output(tmp_video).global_args(
+            '-loglevel',
+            'error').run(
+            overwrite_output=True)
         os.remove(video_name)
         shutil.copy2(tmp_video, video_name)
         os.remove(tmp_video)
-        
+
     def mosaic(self, img, alpha=0.1):
         w = img.shape[1]
         h = img.shape[0]
@@ -81,6 +92,8 @@ class Video:
         Cut out the video by specifying the start and end seconds.
         """
         stream = ffmpeg.input(self.input_video, ss=start, to=end)
-        stream = ffmpeg.output(stream, self.output_video).global_args('-loglevel', 'error')
+        stream = ffmpeg.output(
+            stream, self.output_video).global_args(
+            '-loglevel', 'error')
         ffmpeg.run(stream, overwrite_output=True)
         #stream = ffmpeg.crop(self.ffmpeg_stream, upper_left_x, upper_left_y, width, height)
