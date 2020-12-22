@@ -1,24 +1,24 @@
-#MIT License
+# MIT License
 #
-#Copyright (c) 2020 hitman
+# Copyright (c) 2020 hitman
 #
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 #
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import cv2
 from cv2 import CAP_PROP_FRAME_COUNT
@@ -54,8 +54,8 @@ class Video:
         self.cap.release()
         cv2.destroyAllWindows()
 
-    def get_mp3(self, audio_name, input_video=None):
-        """get mp3 from mp4"""
+    def get_sound(self, audio_name, input_video=None):
+        """get sound from mp4"""
         if input_video is None:
             input_video = self.input_video
         stream = ffmpeg.input(input_video)
@@ -66,18 +66,8 @@ class Video:
             'error')
         ffmpeg.run(stream, overwrite_output=True)
 
-    def set_mp3(self, audio_name, video_name):
-        """set mp3 to mp4"""
-        # compare audio and video duration time
-        sound = AudioSegment.from_file(audio_name, "mp3")
-        sound_seconds = int(sound.duration_seconds)
-        
-        cap = cv2.VideoCapture(video_name)
-        frame_number = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        fps = int(cap.get(cv2.CAP_PROP_FPS))
-        video_seconds = int(frame_number / fps)
-        assert sound_seconds == video_seconds, f"MIAMATCH TIME,SOUND:{sound_seconds} VIDEO:{video_seconds}"
-
+    def set_sound(self, audio_name, video_name):
+        """set sound to mp4"""
         audio_stream = ffmpeg.input(audio_name)
         video_stream = ffmpeg.input(video_name)
         tmp_video = "tmp" + video_name

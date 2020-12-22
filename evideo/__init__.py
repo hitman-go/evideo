@@ -33,19 +33,19 @@ def amplify_sound(input_file, output_file, set_video_flag=True):
             if os.path.exists(output_file):
                 os.remove(output_file)
             shutil.copy2(input_file, output_file)
-        # get mp3 from mp4
-        mp3_file = os.path.splitext(os.path.basename(input_file))[0] + ".mp3"
+        # get wav from mp4
+        sound_file = os.path.splitext(os.path.basename(input_file))[0] + ".wav"
         video_ = Video(input_file)
-        video_.get_mp3(mp3_file, input_file)
+        video_.get_sound(sound_file, input_file)
     else:
         if os.path.exists(output_file):
             os.remove(output_file)
             shutil.copy2(input_file, output_file)
-            mp3_file = output_file
-    # amplify mp3 file
-    audio_ = Audio(mp3_file)
+            sound_file = output_file
+    # amplify sound file
+    audio_ = Audio(sound_file)
     audio_.amplify()
 
-    # set mp3 to mp4
+    # set sound to mp4
     if set_video_flag and ext_ == ".mp4":
-        video_.set_mp3(mp3_file, output_file)
+        video_.set_sound(sound_file, output_file)
